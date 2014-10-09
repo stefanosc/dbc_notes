@@ -637,16 +637,6 @@ SELECT continent, name, area FROM world x
       AND area > 0)
 ```
 
-Find each country that belongs to a continent WHERE all populations are less than 25000000. Show name, continent and population.
-
-```sql
-SELECT continent, name, area FROM world x
-  WHERE area >= ALL
-    (SELECT area FROM world y
-      WHERE y.continent = x.continent
-      AND area>0)
-```
-
 The same query can be written as:
 
 ```sql
@@ -656,7 +646,7 @@ SELECT continent, name, area FROM world y
       WHERE x.continent = y.continent)
 ```
 
-Some countries have populations more than three times that of any of their neighbours (in the same continent). Give the countries and continents.
+Find each country that belongs to a continent WHERE all populations are less than 25000000. Show name, continent and population.
 
 ```sql
 SELECT name,continent,population FROM world x
@@ -664,4 +654,14 @@ SELECT name,continent,population FROM world x
     SELECT population FROM world y
      WHERE x.continent = y.continent
        AND y.population>0)
+```
+
+Some countries have populations more than three times that of any of their neighbours (in the same continent). Give the countries and continents.
+
+```sql
+SELECT name,continent FROM world x
+  WHERE population > ALL (
+    SELECT population * 3 FROM world y
+      WHERE x.continent = y.continent
+        AND x.name!=y.name )
 ```
