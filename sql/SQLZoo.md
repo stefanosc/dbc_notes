@@ -200,11 +200,10 @@ SELECT subject, winner FROM nobel
   WHERE winner LIKE 'Sir%'
   AND yr LIKE '196%'
 ```
-
-Medicine
-Sir John Eccles
-Medicine
-Sir Frank Macfarlane Burnet
+| Subject  | Winner          |
+|----------|-----------------|
+| Medicine | Sir John Eccles |
+| Medicine | Sir Frank Macfarlane Burnet |
 
 Select the code which would show the year when neither a Physics or Chemistry award was given
 
@@ -231,17 +230,13 @@ SELECT subject, COUNT(subject)
   WHERE yr ='1960'
   GROUP BY subject
 ```
-
-Chemistry
-1
-Literature
-1
-Medicine
-2
-Peace
-1
-Physics
-1
+| Subject | COUNT(Subject) |
+|---------|----------------|
+| Chemistry | 1 |
+| Literature | 1 |
+| Medicine | 2 |
+| Peace | 1 |
+| Physics | 1 |
 
 
 ## SUM and COUNT
@@ -478,12 +473,17 @@ SELECT player, COUNT(*), teamid
     GROUP BY player
 ```
 
-Select the result that would be obtained FROM this code: SELECT teamid, mdate FROM goal JOIN game on (matchid=id) WHERE mdate = '9 June 2012'
+Select the result that would be obtained FROM this code:
 
-DEN
-9 June 2012
-GER
-9 June 2012
+```sql
+SELECT teamid, mdate FROM goal JOIN game ON matchid = id
+  WHERE mdate = '9 June 2012'
+```
+
+| teamid | mdate |
+|-----|-------------|
+| DEN | 9 June 2012 |
+| GER | 9 June 2012 |
 
 Select the code which would show the player and their team for those who have scored against Poland(POL) in National Stadium, Warsaw.
 
@@ -503,7 +503,8 @@ Select the code which shows the player, their team and the time they scored, for
 SELECT DISTINCT player, teamid, gtime
   FROM game JOIN goal ON matchid = id
     WHERE stadium = 'Stadion Miejski (Wroclaw)'
-    AND (team1 != 'ITA' AND team2 !='ITA')
+    AND team1 != 'ITA'
+    AND team2 !='ITA'
 ```
 
 Select the result that would be obtained FROM this code:
@@ -514,14 +515,12 @@ SELECT teamname, COUNT(*)
   GROUP BY teamname HAVING COUNT(*) < 3
 ```
 
-Netherlands
-2
-Poland
-2
-Republic of Ireland
-1
-Ukraine
-2
+| teamname | COUNT(*) |
+|------------|------|
+| Netherlands | 2 |
+| Poland | 2 |
+| Republic of Ireland | 1 |
+| Ukraine | 2 |
 
 
 Show the stadium and the number of goals scored in each stadium.
