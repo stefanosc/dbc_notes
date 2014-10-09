@@ -2,7 +2,7 @@
 
 ### [http://sqlzoo.net/wiki/Main_Page](http://sqlzoo.net/wiki/Main_Page)
 
-## SQLZOO:SELECT basics
+## SELECT basics
 
 Show the population of Germany
 
@@ -32,15 +32,14 @@ Show the name and continent WHERE the area is less than 2000 and the gdp is more
 SELECT name , continent
   FROM world
   WHERE area < 2000
-    AND gdp > 500000000
+  AND gdp > 500000000
 ```
 
 Checking a list The word IN allows us to check if an item is in a list. The example shows the name and population for the countries 'Ireland', 'Iceland' and 'Denmark'
 
 ```sql
 SELECT name, population FROM world
-  WHERE name IN ('Ireland', 'Iceland',
-                 'Denmark')
+  WHERE name IN ('Ireland', 'Iceland', 'Denmark')
 ```
 
 What are the countries beginning with G? The word LIKE permits pattern matching - % is the wildcard. The examples shows countries beginning with D
@@ -70,35 +69,35 @@ Show the name for the countries that have a population of at least 200 million. 
 
 ```sql
 SELECT name FROM world
-WHERE population>=200000000
+  WHERE population>=200000000
 ```
 
 Give the name and the per capita GDP for those countries with a population of at least 200 million.
 
 ```sql
 SELECT name, gdp/population FROM world
- WHERE population >= 200000000
+  WHERE population >= 200000000
 ```
 
 Show the name and population in millions for the countries of the continent 'South America'. Divide the population by 1000000 to get population in millions.
 
 ```sql
 SELECT name,population/1000000 FROM world
-WHERE continent = 'South America'
+  WHERE continent = 'South America'
 ```
 
 Show the name and population for 'France', 'Germany', 'Italy'
 
 ```sql
 SELECT name,population FROM world
-WHERE name IN ('France','Germany','Italy')
+  WHERE name IN ('France','Germany','Italy')
 ```
 
 Show the countries which have a name that includes the word 'United'
 
 ```sql
 SELECT name FROM world
-WHERE name LIKE '%United%'
+  WHERE name LIKE '%United%'
 ```
 
 Shows the year,subject and winner FROM the nobel table for the year 1960
@@ -106,7 +105,7 @@ Shows the year,subject and winner FROM the nobel table for the year 1960
 ```sql
 SELECT yr, subject, winner
   FROM nobel
- WHERE yr = 1960
+  WHERE yr = 1960
 ```
 
 
@@ -119,43 +118,48 @@ Show who won the 1962 prize for Literature.
 ```sql
 SELECT winner
   FROM nobel
- WHERE yr = 1962
-   AND subject = 'Literature'
+  WHERE yr = 1962
+  AND subject = 'Literature'
 ```
 
 Show the year and subject that won 'Albert Einstein' his prize.
 
 ```sql
 SELECT yr,subject FROM nobel
-WHERE winner = 'Albert Einstein'
+  WHERE winner = 'Albert Einstein'
 ```
 
 Give the name of the 'Peace' winners since the year 2000, including 2000.
 
 ```sql
 SELECT winner FROM nobel
-WHERE subject ='Peace' and yr >=2000
+  WHERE subject ='Peace'
+  AND yr >=2000
 ```
 
 Show all details (yr, subject, winner) of the Literature prize winners for 1980 to 1989 inclusive.
 
 ```sql
 SELECT yr,subject,winner FROM nobel
-WHERE subject='Literature' AND yr BETWEEN 1980 AND 1989
+  WHERE subject='Literature'
+  AND yr BETWEEN 1980 AND 1989
 ```
 
 Show all details of the presidential winners: ('Theodore Roosevelt', 'Woodrow Wilson', 'Jed Bartlet', 'Jimmy Carter')
 
 ```sql
 SELECT * FROM nobel
- WHERE winner IN ('Theodore Roosevelt', 'Woodrow Wilson', 'Jed Bartlet', 'Jimmy Carter')
+ WHERE winner IN ('Theodore Roosevelt',
+                  'Woodrow Wilson',
+                  'Jed Bartlet',
+                  'Jimmy Carter')
 ```
 
 Show the winners with first name John
 
 ```sql
 SELECT winner FROM nobel
-WHERE winner LIKE 'John%'
+  WHERE winner LIKE 'John%'
 ```
 
 In which years was the Physics prize awarded but no Chemistry prize.
@@ -171,7 +175,8 @@ Pick the code which shows the name of winner's names beginning with C and ending
 
 ```sql
 SELECT winner FROM nobel
-  WHERE winner LIKE 'C%' AND winner LIKE '%n'
+  WHERE winner LIKE 'C%'
+  AND winner LIKE '%n'
 ```
 
 Select the code that shows how many Chemistry awards were given between 1950 and 1960
@@ -191,7 +196,9 @@ SELECT COUNT(DISTINCT yr) FROM nobel
 ```
 
 ```sql
-SELECT subject, winner FROM nobel WHERE winner LIKE 'Sir%' AND yr LIKE '196%'
+SELECT subject, winner FROM nobel
+  WHERE winner LIKE 'Sir%'
+  AND yr LIKE '196%'
 ```
 
 Medicine
@@ -210,12 +217,17 @@ SELECT yr FROM nobel
 Select the code which shows the years when a Medicine award was given but no Peace or Literature award was
 
 ```sql
-SELECT DISTINCT yr FROM nobel WHERE subject='Medicine' AND yr NOT IN(SELECT yr FROM nobel WHERE subject='Literature') AND yr NOT IN (SELECT yr FROM nobel WHERE subject='Peace')
+SELECT DISTINCT yr FROM nobel
+  WHERE subject='Medicine'
+  AND yr NOT IN(SELECT yr FROM nobel
+                WHERE subject='Literature')
+  AND yr NOT IN (SELECT yr FROM nobel
+                 WHERE subject='Peace')
 ```
 
 ```sql
 SELECT subject, COUNT(subject)
-   FROM nobel
+  FROM nobel
   WHERE yr ='1960'
   GROUP BY subject
 ```
@@ -238,8 +250,7 @@ Show the total population of the world.
 world(name, continent, area, population, gdp)
 
 ```sql
-SELECT SUM(population)
-FROM world
+SELECT SUM(population) FROM world
 ```
 
 List all the continents - just once each.
@@ -252,51 +263,58 @@ Give the total GDP of Africa
 
 ```sql
 SELECT SUM(gdp) FROM world
-WHERE continent = 'Africa'
+  WHERE continent = 'Africa'
 ```
 
 How many countries have an area of at least 1000000
 
 ```sql
 SELECT COUNT(name) FROM world
-WHERE area>= 1000000
+  WHERE area>= 1000000
 ```
 
 What is the total population of ('France','Germany','Spain')
 
 ```sql
 SELECT SUM(population) FROM world
-WHERE name IN('France','Germany','Spain');
+  WHERE name IN('France','Germany','Spain');
 ```
 
 For each continent show the continent and number of countries.
 
 ```sql
-SELECT continent,COUNT(name) FROM world GROUP BY continent
+SELECT continent,COUNT(name) FROM world
+  GROUP BY continent
 ```
 
 For each continent show the continent and number of countries with populations of at least 10 million.
 
 ```sql
-SELECT continent,COUNT(name) FROM world  WHERE population>=10000000 GROUP BY continent
+SELECT continent,COUNT(name) FROM world
+  WHERE population>=10000000
+  GROUP BY continent
 ```
 
 List the continents that have a total population of at least 100 million.
 
 ```sql
-SELECT continent FROM world GROUP BY continent having SUM(population)>=100000000
+SELECT continent FROM world
+  GROUP BY continent
+  HAVING SUM(population) >= 100000000
 ```
 
 Select the statement that shows the SUM of population of all countries in 'Europe'
 
 ```sql
-SELECT SUM(population) FROM bbc WHERE region = 'Europe'
+SELECT SUM(population) FROM bbc
+  WHERE region = 'Europe'
 ```
 
 Select the statement that shows the number of countries with population smaller than 150000
 
 ```sql
-SELECT COUNT(name) FROM bbc WHERE population < 150000
+SELECT COUNT(name) FROM bbc
+  WHERE population < 150000
 ```
 
 Select the full set of SQL aggregate functions
@@ -307,7 +325,7 @@ AVG(), COUNT(), FIRST(), LAST(), MAX(), MIN(), SUM()
 
 ```sql
 SELECT region, SUM(area)
-   FROM bbc
+  FROM bbc
   WHERE SUM(area) > 15000000
   GROUP BY region
 ```
@@ -317,19 +335,22 @@ No result due to invalid use of the WHERE function
 Select the statement that shows the average population of 'Poland', 'Germany' and 'Denmark'
 
 ```sql
-SELECT AVG(population) FROM bbc WHERE name IN ('Poland', 'Germany', 'Denmark')
+SELECT AVG(population) FROM bbc
+  WHERE name IN ('Poland', 'Germany', 'Denmark')
 ```
 
 Select the statement that shows the medium population density of each region
 
 ```sql
-SELECT region, SUM(population)/SUM(area) AS density FROM bbc GROUP BY region
+SELECT region, SUM(population)/SUM(area) AS density FROM bbc
+  GROUP BY region
 ```
 
 Select the statement that shows the name and population density of the country with the largest population
 
 ```sql
-SELECT name, population/area AS density FROM bbc WHERE population = (SELECT MAX(population) FROM bbc)
+SELECT name, population/area AS density FROM bbc
+  WHERE population = (SELECT MAX(population) FROM bbc)
 ```
 
 ## The JOIN operation
@@ -346,7 +367,7 @@ Show id, stadium, team1, team2 for game 1012
 ```sql
 SELECT id,stadium,team1,team2
   FROM game
- WHERE id = 1012
+  WHERE id = 1012
 ```
 
 You can combine the two steps into a single query with a JOIN. You will get all the game details and all the goal details if you use
@@ -361,15 +382,15 @@ Show the player, teamid and mdate and for every German goal. teamid='GER'
 ```sql
 SELECT player,teamid,mdate
   FROM game JOIN goal ON (id=matchid)
- WHERE teamid='GER'
+  WHERE teamid='GER'
 ```
 
 Show the team1, team2 and player for every goal scored by a player called Mario player LIKE 'Mario%'
 
 ```sql
 SELECT team1,team2,player
-FROM goal join game on (id=matchid)
-WHERE player LIKE 'Mario%'
+  FROM goal join game on (id=matchid)
+  WHERE player LIKE 'Mario%'
 ```
 
 The table eteam gives details of every national team including the coach. You can JOIN goal to eteam using the phrase goal JOIN eteam on teamid=id
@@ -378,8 +399,8 @@ Show player, teamid, coach, gtime for all goals scored in the first 10 minutes g
 
 ```sql
 SELECT player, teamid, coach, gtime
-  FROM goal join eteam on (id = teamid)
- WHERE gtime<=10
+  FROM goal JOIN eteam ON (id = teamid)
+  WHERE gtime<=10
 ```
 
 To JOIN game with eteam you could use either
@@ -391,16 +412,16 @@ List the the dates of the matches and the name of the team in which 'Fernando Sa
 
 ```sql
 SELECT mdate,teamname
-FROM game JOIN eteam ON (team1 = eteam.id)
-WHERE coach = 'Fernando Santos'
+  FROM game JOIN eteam ON (team1 = eteam.id)
+  WHERE coach = 'Fernando Santos'
 ```
 
 List the player for every goal scored in a game WHERE the stadium was 'National Stadium, Warsaw'
 
 ```sql
 SELECT player
-FROM goal JOIN game ON (id=matchid)
-WHERE stadium = 'National Stadium, Warsaw'
+  FROM goal JOIN game ON (id=matchid)
+  WHERE stadium = 'National Stadium, Warsaw'
 ```
 
 The example query shows all goals scored in the Germany-Greece quarterfinal.
@@ -408,7 +429,7 @@ The example query shows all goals scored in the Germany-Greece quarterfinal.
 ```sql
 SELECT player, gtime
   FROM game JOIN goal ON matchid = id
-    WHERE (team1='GER' AND team2='GRE')
+  WHERE (team1='GER' AND team2='GRE')
 ```
 
 Instead show the name of all players who scored a goal against Germany.
@@ -428,7 +449,7 @@ You should COUNT(*) in the SELECT line and GROUP BY teamname
 ```sql
 SELECT teamname, COUNT(*) AS Goals
   FROM eteam JOIN goal ON id=teamid
- GROUP BY teamname
+  GROUP BY teamname
 ```
 
 For every match involving 'POL', show the matchid, date and the number of goals scored.
@@ -436,8 +457,8 @@ For every match involving 'POL', show the matchid, date and the number of goals 
 ```sql
 SELECT  matchid,mdate AS Date, COUNT( teamid) AS Goals
   FROM game JOIN goal ON matchid = id
- WHERE (team1 = 'POL' OR team2 = 'POL' )
-GROUP BY matchid
+  WHERE (team1 = 'POL' OR team2 = 'POL' )
+  GROUP BY matchid
 ```
 
 You want to find the stadium WHERE player 'Dimitris Salpingidis' scored. Select the JOIN condition to use:
@@ -468,12 +489,12 @@ Select the code which would show the player and their team for those who have sc
 
 ```sql
 SELECT DISTINCT player, teamid
-   FROM game JOIN goal ON matchid = id
-  WHERE stadium = 'National Stadium, Warsaw' AND mdate IN
-    (SELECT mdate
-      FROM game
-     WHERE team1 = 'POL' OR team2 = 'POL')
-   AND teamid != 'POL'
+  FROM game JOIN goal ON matchid = id
+  WHERE stadium = 'National Stadium, Warsaw'
+  AND mdate IN (SELECT mdate FROM game
+                WHERE team1 = 'POL'
+                OR team2 = 'POL')
+  AND teamid != 'POL'
 ```
 
 Select the code which shows the player, their team and the time they scored, for players who have played in Stadion Miejski (Wroclaw) but not against Italy(ITA).
@@ -507,7 +528,7 @@ Show the stadium and the number of goals scored in each stadium.
 
 ```sql
 SELECT stadium,COUNT(*)
-  FROM game JOIN goal on id=matchid
+  FROM game JOIN goal ON id=matchid
   GROUP BY STADIUM
 ```
 
@@ -564,8 +585,9 @@ Show the countries in Europe with a per capita GDP greater than 'United Kingdom'
 
 ```sql
 SELECT name FROM world
-WHERE continent='Europe' AND (gdp/population) >
-   (SELECT gdp/population FROM world
+  WHERE continent='Europe'
+  AND (gdp/population) >
+    (SELECT gdp/population FROM world
     WHERE name='United Kingdom')
 ```
 
@@ -592,10 +614,10 @@ Which countries have a GDP greater than every country in Europe? Give the name o
 
 ```sql
 SELECT name FROM world
-WHERE gdp > ALL
-  ( SELECT gdp FROM world
-    WHERE continent = 'Europe'
-    AND gdp IS NOT NULL)
+  WHERE gdp > ALL
+    ( SELECT gdp FROM world
+      WHERE continent = 'Europe'
+      AND gdp IS NOT NULL)
 ```
 
 ```sql
@@ -612,8 +634,8 @@ Find the largest country (by area) in each continent, show the continent, the na
 SELECT continent, name, area FROM world x
   WHERE area >= ALL
     (SELECT area FROM world y
-       WHERE y.continent = x.continent
-       AND area > 0)
+      WHERE y.continent = x.continent
+      AND area > 0)
 ```
 
 Find each country that belongs to a continent WHERE all populations are less than 25000000. Show name, continent and population.
@@ -622,8 +644,8 @@ Find each country that belongs to a continent WHERE all populations are less tha
 SELECT continent, name, area FROM world x
   WHERE area >= ALL
     (SELECT area FROM world y
-        WHERE y.continent = x.continent
-          AND area>0)
+      WHERE y.continent = x.continent
+      AND area>0)
 ```
 
 The same query can be written as:
@@ -632,7 +654,7 @@ The same query can be written as:
 SELECT continent, name, area FROM world y
     WHERE area =
     ( SELECT MAX(area) FROM world x
-    WHERE x.continent = y.continent)
+      WHERE x.continent = y.continent)
 ```
 
 Some countries have populations more than three times that of any of their neighbours (in the same continent). Give the countries and continents.
