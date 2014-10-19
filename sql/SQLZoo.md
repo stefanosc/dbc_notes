@@ -551,11 +551,12 @@ SELECT matchid,mdate, COUNT(teamid)
 
 List every match with the goals scored by each team as shown. This will use "CASE WHEN" which has not been explained in any previous exercises.
 
-mdate team1 score1  team2 score2
-1 July 2012 ESP 4 ITA 0
-10 June 2012  ESP 1 ITA 1
-10 June 2012  IRL 1 CRO 3
-...
+| mdate  | team1  | score1  |  team2  | score2 |
+|--------|--------|--------|---------|----|
+| 1  | July  | 2012  | ESP  | 4  | ITA  | 0 |
+| 10  | June  | 2012  |  ESP  | 1  | ITA  | 1 |
+| 10  | June  | 2012  |  IRL  | 1  | CRO  |3 |
+| ... | | | | | | |
 
 Notice in the query given every goal is listed. If it was a team1 goal then a 1 appears in score1, otherwise there is a 0. You could SUM this column to get a count of the goals scored by team1. Sort your result by mdate, matchid, team1 and team2.
 
@@ -664,4 +665,246 @@ SELECT name,continent FROM world x
     SELECT population * 3 FROM world y
       WHERE x.continent = y.continent
         AND x.name!=y.name )
+```
+
+
+### SELECT within SELECT Quizzes
+
+1. Select the code that shows the name, region and population of the smallest country in each region
+
+```sql
+ SELECT region, name, population FROM bbc x
+  WHERE population <= ALL (SELECT population FROM bbc y
+                            WHERE y.region=x.region
+                            AND population>0)
+ ```
+
+2. Select the code that shows the countries belonging to regions with all populations over 50000
+
+```sql
+ SELECT name,region,population FROM bbc x WHERE 50000 <= ALL (SELECT population FROM bbc y WHERE x.region=y.region AND y.population>0)
+ ```
+
+3. Select the code that shows the countries with a less than a third of the population of the countries around it
+
+```sql
+ SELECT name, region FROM bbc x WHERE population < ALL (SELECT population/3 FROM bbc y WHERE y.region = x.region AND y.name != x.name)
+ ```
+
+4. Select the result that would be obtained from the following code:
+
+```sql
+SELECT name FROM bbc
+ WHERE population >
+       (SELECT population
+          FROM bbc
+         WHERE name='United Kingdom')
+   AND region IN
+       (SELECT region
+          FROM bbc
+         WHERE name = 'United Kingdom')
+```
+
+| Table-D |
+|----------|
+| France |
+| Germany |
+| Russia |
+| Turkey |
+
+
+
+5. Select the code that would show the countries with a greater GDP than any country in Africa
+
+```sql
+ SELECT name FROM bbc WHERE gdp > ALL (SELECT MAX(gdp) FROM bbc WHERE region = 'Africa' AND gdp IS NOT NULL)
+```
+
+6. Select the code that shows the countries with population smaller than Russia but bigger than Denmark
+
+```sql
+ SELECT name FROM bbc WHERE population < (SELECT population FROM bbc WHERE name='Russia') AND population > (SELECT population FROM bbc WHERE name='Denmark')
+ ```
+
+7. Select the result that would be obtained from the following code:
+
+```sql
+SELECT name FROM bbc
+ WHERE population > ALL
+       (SELECT MAX(population)
+          FROM bbc
+         WHERE region = 'Europe')
+   AND region = 'South Asia'
+```
+
+| Table-B |
+|---|
+| Bangladesh |
+| India |
+| Pakistan |
+
+
+## More JOIN operations
+
+### More JOIN operations Tutorial
+
+1. List the films where the yr is 1962 [Show id, title]
+
+```sql
+SELECT id, title
+ FROM movie
+ WHERE yr=1962
+```
+
+2. Give year of 'Citizen Kane'.
+
+```sql
+SELECT yr FROM movie
+  WHERE title = 'Citizen Kane'
+```
+
+3. List all of the Star Trek movies, include the id, title and yr (all of these movies include the words Star Trek in the title). Order results by year.
+
+```sql
+SELECT id, title, yr FROM movie
+  WHERE title LIKE '%Star Trek%'
+  ORDER BY yr
+```
+
+4. What are the titles of the films with id 11768, 11955, 21191
+
+```sql
+SELECT title FROM movie
+  WHERE id IN (11768, 11955, 21191)
+```
+
+5. What id number does the actor 'Glenn Close' have?
+
+```sql
+SELECT id FROM actor
+  WHERE name = 'Glenn Close'
+```
+
+6. What is the id of the film 'Casablanca'
+
+```sql
+SELECT id FROM movie
+  WHERE title = 'Casablanca'
+```
+
+7. Obtain the cast list for 'Casablanca'. Use the id value that you obtained in the previous question.
+
+```sql
+SELECT name FROM actor
+  JOIN casting ON actor.id = actorid
+  JOIN movie ON movie.id = movieid
+    WHERE movie.id = 11768
+```
+
+8. Obtain the cast list for the film 'Alien'
+
+```sql
+SELECT name FROM actor
+  JOIN casting ON actor.id = actorid
+  JOIN movie ON movie.id = movieid
+    WHERE title = 'Alien'
+```
+
+9. List the films in which 'Harrison Ford' has appeared
+
+```sql
+SELECT title FROM movie
+  JOIN casting ON movie.id = movieid
+  JOIN actor ON actor.id = actorid
+    WHERE name = 'Harrison Ford'
+```
+
+10. List the films where 'Harrison Ford' has appeared - but not in the star role. [Note: the ord field of casting gives the position of the actor. If ord=1 then this actor is in the starring role]
+
+```sql
+SELECT title FROM movie
+  JOIN casting ON movie.id = movieid
+  JOIN actor ON actor.id = actorid
+    WHERE name = 'Harrison Ford'
+    AND ord <> 1
+```
+
+11. List the films together with the leading star for all 1962 films.
+
+```sql
+SELECT title, name FROM movie
+  JOIN casting ON movie.id = movieid
+  JOIN actor ON actor.id = actorid
+    WHERE yr = 1962
+    AND ord = 1
+```
+
+12. Which were the busiest years for 'John Travolta', show the year and the number of movies he made each year for any year in which he made more than 2
+
+```sql
+SELECT yr,COUNT(title) FROM movie
+  JOIN casting ON movie.id=movieid
+  JOIN actor   ON actorid=actor.id
+    WHERE name='John Travolta'
+    GROUP BY yr
+    HAVING COUNT(title) = ( SELECT MAX(c) FROM
+                          ( SELECT yr,COUNT(title) AS c FROM movie
+                             JOIN casting ON movie.id=movieid
+                             JOIN actor   ON actorid=actor.id
+                               WHERE name='John Travolta'
+                               GROUP BY yr) AS t )
+```
+simpler way of writing a query that would return the result as per question. The result may be different depending on data in the db because the original solution uses `SELECT MAX` instead of `> 2`
+
+```sql
+SELECT yr,COUNT(title) FROM movie
+  JOIN casting ON movie.id=movieid
+  JOIN actor   ON actorid=actor.id
+    WHERE name='John Travolta'
+    GROUP BY yr
+    HAVING COUNT(title) > 2
+```
+
+13. List the film title and the leading actor for all of the films 'Julie Andrews' played in.
+
+```sql
+SELECT title, name FROM movie
+ JOIN casting ON movie.id=movieid
+ JOIN actor   ON actorid=actor.id
+  WHERE movieid IN (
+    SELECT movieid FROM casting
+      JOIN actor ON actorid=actor.id
+      WHERE name='Julie Andrews')
+  AND ord = 1
+```
+
+14. Obtain a list in alphabetical order of actors who've had at least 30 starring roles.
+
+```sql
+SELECT name FROM actor
+  JOIN casting ON actor.id = actorid
+    WHERE ord = 1
+    GROUP BY name
+    HAVING COUNT(ord) >= 30
+```
+
+15. List the films released in the year 1978 ordered by the number of actors in the cast.
+
+```sql
+SELECT title, COUNT(actorid) AS actors FROM movie
+  JOIN casting ON id = movieid
+    WHERE yr = 1978
+    GROUP BY title
+    ORDER BY actors DESC
+```
+
+16. List all the people who have worked with 'Art Garfunkel'.
+
+```sql
+SELECT name FROM actor
+  JOIN casting ON id=actorid
+    WHERE movieid IN ( SELECT movieid FROM casting
+                         JOIN actor ON id=actorid
+                           WHERE name = 'Art Garfunkel')
+    AND name <> 'Art Garfunkel'
 ```
